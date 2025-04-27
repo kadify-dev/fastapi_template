@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from app.api.schemas.user import UserCreate, UserFromDB
 from app.core.config import settings
-from app.core.exceptions import (
+from app.errors.exceptions import (
     AccessTokenExpiredError,
     InvalidCredentialsError,
     RefreshTokenExpiredError,

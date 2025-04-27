@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import settings
-from app.core.exceptions import InvalidTokenError, UserNotFoundError
+from app.errors.exceptions import InvalidTokenError, UserNotFoundError
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.utils.unitofwork import IUnitOfWork, UnitOfWork

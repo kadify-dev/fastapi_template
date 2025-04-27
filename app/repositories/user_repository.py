@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.core.exceptions import DatabaseError
+from app.errors.exceptions import DatabaseError
 from app.db.models import User
 from app.repositories.base_repository import SQLAlchemyRepository
 

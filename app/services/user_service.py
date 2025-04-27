@@ -1,5 +1,5 @@
 from app.api.schemas.user import UserFromDB
-from app.core.exceptions import UserNotFoundError
+from app.errors.exceptions import UserNotFoundError
 from app.utils.unitofwork import IUnitOfWork
 
 

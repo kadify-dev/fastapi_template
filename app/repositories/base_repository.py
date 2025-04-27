@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import DatabaseError, UserNotFoundError
+from app.errors.exceptions import DatabaseError, UserNotFoundError
 
 
 class AbstractRepository(ABC):
