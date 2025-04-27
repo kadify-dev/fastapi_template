@@ -9,3 +9,6 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     email: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str]
+
+    def __repr__(self):
+        return f"<User id={self.id} email={self.email}>"

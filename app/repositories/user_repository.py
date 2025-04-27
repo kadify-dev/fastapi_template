@@ -1,20 +1,22 @@
+import logging
+
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.models import User
 from app.errors.exceptions import DatabaseError
 from app.repositories.base_repository import SQLAlchemyRepository
+from app.utils.logging_decorators import log_db_operation
+
+logger = logging.getLogger(__name__)
 
 
 class UserRepository(SQLAlchemyRepository):
     model = User
 
+    @log_db_operation("Поиск пользователя по email")
     async def find_by_email(self, email):
-        try:
-            stmt = select(self.model).where(self.model.email == email)
-            result = await self.session.execute(stmt)
-            return result.scalar_one_or_none()
-        except SQLAlchemyError as e:
-            raise DatabaseError(
-                detail=f"Failed to fetch user by email {email}: {str(e)}"
-            )
+        stmt = select(self.model).where(self.model.email == email)
+        result = await self.session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return user

@@ -1,3 +1,5 @@
+import logging
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,9 +15,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_MINUTES: int
 
+    LOG_LEVEL: str = "ERROR"
+
     @property
     def ASYNC_DATABASE_URL(self) -> str:
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+    @property
+    def log_level(self) -> int:
+        return getattr(logging, self.LOG_LEVEL, logging.ERROR)
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
