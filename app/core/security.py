@@ -4,6 +4,7 @@ import jwt
 from passlib.context import CryptContext
 
 from app.core.config import settings
+from app.core.exceptions import InvalidTokenError, TokenError, TokenExpiredError
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -30,12 +31,21 @@ def verify_token(token, token_type):
         )
         exp = payload.get("exp")
         current_token_type = payload.get("type")
-        if (
-            current_token_type != token_type
-            or not exp
-            or datetime.utcfromtimestamp(exp) < datetime.utcnow()
-        ):
-            return None
-        return payload.get("sub")
-    except jwt.PyJWTError:
-        return None
+
+        if current_token_type != token_type:
+            raise InvalidTokenError(detail="Invalid token type")
+
+        if not exp:
+            raise InvalidTokenError(detail="Token expiration not set")
+
+        if datetime.utcfromtimestamp(exp) < datetime.utcnow():
+            raise TokenExpiredError()
+
+        sub = payload.get("sub")
+        if not sub:
+            raise InvalidTokenError(detail="Subject not found in token")
+
+        return sub
+
+    except jwt.PyJWTError as e:
+        raise TokenError(detail=str(e))
