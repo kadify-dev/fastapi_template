@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
 from app.api.routers.auth import auth_router
+from app.errors.exceptions import BaseHTTPException
+from app.errors.handlers import http_exception_handler, unexpected_exception_handler
 
 app = FastAPI()
 
+app.add_exception_handler(BaseHTTPException, http_exception_handler)
+app.add_exception_handler(Exception, unexpected_exception_handler)
 
 app.include_router(auth_router)
