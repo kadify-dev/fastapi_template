@@ -1,5 +1,8 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
 from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, EmailStr
+
+from app.db.models import UserRole
 
 
 class UserBase(BaseModel):
@@ -14,3 +17,4 @@ class UserCreate(UserBase):
 
 class UserFromDB(UserBase):
     id: UUID
+    role: UserRole
