@@ -25,15 +25,6 @@ def log_db_operation(operation_name: str):
                 )
                 return result
             except SQLAlchemyError as e:
-                logger.error(
-                    "Ошибка базы данных при выполнении операции '%s'. "
-                    "Аргументы: args=%s, kwargs=%s. Ошибка: %s",
-                    operation_name,
-                    args,
-                    kwargs,
-                    str(e),
-                    exc_info=True,
-                )
                 raise DatabaseError(
                     detail=f"Ошибка при выполнении операции '{operation_name}': {str(e)}"
                 )
