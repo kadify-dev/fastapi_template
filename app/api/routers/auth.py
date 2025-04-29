@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.api.dependencies import get_auth_service, get_current_user
+from app.api.dependencies import get_auth_service
 from app.api.schemas.auth import RefreshToken
 from app.api.schemas.user import UserCreate, UserFromDB
 from app.services.auth_service import AuthService
@@ -32,8 +32,3 @@ async def refresh_access_token(
     sub = auth_service.verify_refresh_token(refresh_token.token)
     access_token = auth_service.create_access_token(sub)
     return {"access_token": access_token}
-
-
-@auth_router.get("/me")
-async def get_me(current_user: UserFromDB = Depends(get_current_user)):
-    return {"message": f"Hi, id={current_user.id}, email={current_user.email}"}

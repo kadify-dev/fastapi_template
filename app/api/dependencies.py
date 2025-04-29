@@ -1,12 +1,21 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 
-from app.errors.exceptions import InvalidTokenError, UserNotFoundError
+from app.api.schemas.user import UserFromDB
+from app.db.models import UserRole
+from app.errors.exceptions import ForbiddenError, UnauthorizedError, UserNotFoundError
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.utils.unitofwork import IUnitOfWork, UnitOfWork
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+
+async def get_token_optional(request: Request) -> str | None:
+    try:
+        return await oauth2_scheme(request)
+    except HTTPException:
+        return None
 
 
 async def get_user_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> UserService:
@@ -18,16 +27,35 @@ async def get_auth_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> AuthServic
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    token: str | None = Depends(get_token_optional),
     auth_service: AuthService = Depends(get_auth_service),
     user_service: UserService = Depends(get_user_service),
-):
-    sub = auth_service.verify_access_token(token)
-    if not sub:
-        raise InvalidTokenError()
+) -> UserFromDB | None:
+    if token is None:
+        return None
 
-    user = await user_service.get_user_by_id(int(sub))
-    if not user:
-        raise UserNotFoundError()
+    sub = auth_service.verify_access_token(token)
+
+    try:
+        user = await user_service.get_user_by_id(sub)
+    except UserNotFoundError:
+        return None
+
+    return user
+
+
+def require_user(user: UserFromDB | None = Depends(get_current_user)) -> UserFromDB:
+    if user is None:
+        raise UnauthorizedError()
+
+    if user.role not in {UserRole.USER, UserRole.ADMIN}:
+        raise ForbiddenError()
+
+    return user
+
+
+def require_admin(user: UserFromDB | None = Depends(get_current_user)) -> UserFromDB:
+    if user is None or user.role != UserRole.ADMIN:
+        raise ForbiddenError()
 
     return user
