@@ -79,10 +79,7 @@ class SQLAlchemyRepository(AbstractRepository):
         return result.scalar_one_or_none()
 
     @log_db_operation("Удаление записи")
-    async def delete(self, id: int) -> bool:
+    async def delete(self, id: int):
         stmt = delete(self.model).where(self.model.id == id).returning(self.model.id)
         result = await self.session.execute(stmt)
-        deleted_id = result.scalar_one_or_none()
-        if deleted_id is None:
-            raise UserNotFoundError(detail=f"Запись с ID {id} не найдена")
-        return True
+        return result.scalar_one_or_none()
