@@ -1,8 +1,6 @@
-import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.core.config import settings
 from app.errors.exceptions import InvalidTokenError, UserNotFoundError
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService

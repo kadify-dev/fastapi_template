@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_auth_service, get_current_user
 from app.api.schemas.auth import RefreshToken
 from app.api.schemas.user import UserCreate, UserFromDB
-from app.errors.exceptions import InvalidCredentialsError, InvalidTokenError
 from app.services.auth_service import AuthService
 
 auth_router = APIRouter(prefix="/api/auth", tags=["Auth"])

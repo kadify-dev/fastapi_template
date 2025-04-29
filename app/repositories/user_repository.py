@@ -1,10 +1,8 @@
 import logging
 
 from sqlalchemy import select
-from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.models import User
-from app.errors.exceptions import DatabaseError
 from app.repositories.base_repository import SQLAlchemyRepository
 from app.utils.logging_decorators import log_db_operation
 

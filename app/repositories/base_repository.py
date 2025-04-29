@@ -2,10 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 
 from sqlalchemy import delete, insert, select, update
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors.exceptions import DatabaseError, UserNotFoundError
 from app.utils.logging_decorators import log_db_operation
 
 logger = logging.getLogger(__name__)

@@ -1,13 +1,10 @@
 import logging
 
 from fastapi import Request
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.errors.exceptions import (
     BaseHTTPException,
-    DatabaseError,
-    ServerError,
     ValidationError,
 )
 
