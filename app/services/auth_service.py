@@ -73,5 +73,5 @@ class AuthService:
     def create_refresh_token(user_id: int) -> str:
         return create_token(
             {"sub": str(user_id), "type": "refresh"},
-            timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+            timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
         )
