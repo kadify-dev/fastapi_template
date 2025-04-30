@@ -10,8 +10,8 @@ class UserService:
 
     async def get_user_by_id(self, id: int) -> UserResponse:
         async with self.uow as uow:
-            user_from_db = await uow.user_repo.find_by_id(id)
-            if not user_from_db:
+            user = await uow.user_repo.find_by_id(id)
+            if not user:
                 raise UserNotFoundError()
 
-            return UserResponse.model_validate(user_from_db)
+            return UserResponse.model_validate(user)
