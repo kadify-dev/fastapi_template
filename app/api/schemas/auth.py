@@ -2,13 +2,19 @@ from pydantic import BaseModel, ConfigDict
 
 
 class TokenBase(BaseModel):
-    token: str
+    token_type: str = "bearer"
+
     model_config = ConfigDict(from_attributes=True)
 
 
-class AccessToken(TokenBase):
-    pass
+class TokenPair(TokenBase):
+    access_token: str
+    refresh_token: str
 
 
-class RefreshToken(TokenBase):
-    pass
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+
+class AccessTokenResponse(TokenBase):
+    access_token: str
