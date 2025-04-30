@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_auth_service
 from app.api.schemas.auth import AccessTokenResponse, RefreshTokenRequest, TokenPair
-from app.api.schemas.user import UserCreate, UserResponse
+from app.api.schemas.user import UserCreate, UserLogin, UserResponse
 from app.services.auth_service import AuthService
 
 auth_router = APIRouter(prefix="/api/auth", tags=["Auth"])
@@ -12,17 +12,14 @@ auth_router = APIRouter(prefix="/api/auth", tags=["Auth"])
 async def register(
     user: UserCreate, auth_service: AuthService = Depends(get_auth_service)
 ) -> UserResponse:
-    return await auth_service.register_user(user)
+    return await auth_service.register(user)
 
 
 @auth_router.post("/login")
 async def login(
-    user: UserCreate, auth_service: AuthService = Depends(get_auth_service)
+    credentials: UserLogin, auth_service: AuthService = Depends(get_auth_service)
 ) -> TokenPair:
-    user = await auth_service.authenticate_user(user)
-    access_token = auth_service.create_access_token(user.id)
-    refresh_token = auth_service.create_refresh_token(user.id)
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return await auth_service.login(credentials)
 
 
 @auth_router.post("/refresh")
@@ -30,6 +27,4 @@ async def refresh_access_token(
     refresh_token: RefreshTokenRequest,
     auth_service: AuthService = Depends(get_auth_service),
 ) -> AccessTokenResponse:
-    sub = auth_service.verify_refresh_token(refresh_token.token)
-    access_token = auth_service.create_access_token(sub)
-    return {"access_token": access_token}
+    return await auth_service.refresh(refresh_token)
