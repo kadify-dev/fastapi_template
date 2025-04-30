@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from app.api.schemas.user import UserCreate, UserFromDB
+from app.api.schemas.user import UserCreate, UserResponse
 from app.core.config import settings
 from app.core.security import create_token, hash_password, verify_password, verify_token
 from app.errors.exceptions import (
@@ -19,7 +19,7 @@ class AuthService:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    async def register_user(self, user: UserCreate) -> UserFromDB:
+    async def register_user(self, user: UserCreate) -> UserResponse:
         async with self.uow as uow:
             existing_user = await uow.user_repo.find_by_email(user.email)
             if existing_user:
@@ -29,12 +29,12 @@ class AuthService:
             user_data = {"email": user.email, "hashed_password": hashed_password}
 
             user_from_db = await uow.user_repo.create(user_data)
-            user_to_return = UserFromDB.model_validate(user_from_db)
+            user_to_return = UserResponse.model_validate(user_from_db)
             await uow.commit()
 
             return user_to_return
 
-    async def authenticate_user(self, user: UserCreate) -> UserFromDB:
+    async def authenticate_user(self, user: UserCreate) -> UserResponse:
         async with self.uow as uow:
             user_from_db = await uow.user_repo.find_by_email(user.email)
             if not user_from_db or not verify_password(
@@ -42,7 +42,7 @@ class AuthService:
             ):
                 raise InvalidCredentialsError()
 
-            return UserFromDB.model_validate(user_from_db)
+            return UserResponse.model_validate(user_from_db)
 
     @staticmethod
     def verify_access_token(token: str):

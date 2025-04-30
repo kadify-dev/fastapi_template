@@ -15,6 +15,6 @@ class UserCreate(UserBase):
     password: str
 
 
-class UserFromDB(UserBase):
+class UserResponse(UserBase):
     id: UUID
     role: UserRole

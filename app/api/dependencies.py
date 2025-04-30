@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 
-from app.api.schemas.user import UserFromDB
+from app.api.schemas.user import UserResponse
 from app.db.models import UserRole
 from app.errors.exceptions import ForbiddenError, UnauthorizedError, UserNotFoundError
 from app.services.auth_service import AuthService
@@ -30,7 +30,7 @@ async def get_current_user(
     token: str | None = Depends(get_token_optional),
     auth_service: AuthService = Depends(get_auth_service),
     user_service: UserService = Depends(get_user_service),
-) -> UserFromDB | None:
+) -> UserResponse | None:
     if token is None:
         return None
 
@@ -44,7 +44,7 @@ async def get_current_user(
     return user
 
 
-def require_user(user: UserFromDB | None = Depends(get_current_user)) -> UserFromDB:
+def require_user(user: UserResponse | None = Depends(get_current_user)) -> UserResponse:
     if user is None:
         raise UnauthorizedError()
 
@@ -54,7 +54,7 @@ def require_user(user: UserFromDB | None = Depends(get_current_user)) -> UserFro
     return user
 
 
-def require_admin(user: UserFromDB | None = Depends(get_current_user)) -> UserFromDB:
+def require_admin(user: UserResponse | None = Depends(get_current_user)) -> UserResponse:
     if user is None or user.role != UserRole.ADMIN:
         raise ForbiddenError()
 
