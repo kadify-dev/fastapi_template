@@ -1,6 +1,6 @@
 import logging
 import os
-
+import sys
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -30,6 +30,9 @@ class Settings(BaseSettings):
 
 
 def get_settings() -> Settings:
+    if "pytest" in sys.modules:
+        return Settings(_env_file=".env.test")
+
     if env_mode := os.getenv("APP_MODE"):
         env_file = f".env.{env_mode}"
         if os.path.exists(env_file):

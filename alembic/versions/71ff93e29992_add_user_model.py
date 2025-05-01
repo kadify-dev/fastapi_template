@@ -1,7 +1,7 @@
 """Add User model
 
 Revision ID: 71ff93e29992
-Revises: 
+Revises:
 Create Date: 2025-04-29 18:47:05.945921
 
 """
