@@ -16,6 +16,10 @@ class UserBase(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    @field_validator("email")
+    def validate_email(cls, v):
+        return v.lower().strip()
+
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=64)
@@ -29,10 +33,6 @@ class UserCreate(UserBase):
             raise ValueError("Password cannot contain spaces, quotes or backslashes")
 
         return v
-
-    @field_validator("email")
-    def validate_email(cls, v):
-        return v.lower().strip()
 
 
 class UserLogin(UserBase):
