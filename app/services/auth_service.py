@@ -23,12 +23,12 @@ class AuthService:
 
     async def register(self, user: UserCreate) -> UserResponse:
         async with self.uow as uow:
-            user_exists = await uow.user_repo.find_by_email(user.email.lower())
+            user_exists = await uow.user_repo.find_by_email(user.email)
             if user_exists:
                 raise UserAlreadyExistsError()
 
             hashed_password = hash_password(user.password)
-            new_user_data = {"email": user.email.lower(), "hashed_password": hashed_password}
+            new_user_data = {"email": user.email, "hashed_password": hashed_password}
 
             created_user = await uow.user_repo.create(new_user_data)
             user_response = UserResponse.model_validate(created_user)
@@ -51,7 +51,7 @@ class AuthService:
 
     async def _authenticate(self, credentials: UserLogin) -> UserResponse:
         async with self.uow as uow:
-            user = await uow.user_repo.find_by_email(credentials.email.lower())
+            user = await uow.user_repo.find_by_email(credentials.email)
             if not user or not verify_password(
                 credentials.password, user.hashed_password
             ):
