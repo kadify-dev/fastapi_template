@@ -64,3 +64,9 @@ uvicorn app.main:app --reload
 docker compose up --build
 ```
 ---
+
+## 🚀 Запуск тестов
+
+```bash
+pytest
+```
